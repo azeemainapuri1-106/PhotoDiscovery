@@ -1,0 +1,30 @@
+.empty-state {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.empty-state__mark {
+  color: #898d7d;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.empty-state h2 {
+  margin: 16px 0 7px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.empty-state p {
+  margin: 0 0 18px;
+  color: #77786f;
+  font-size: 12px;
+}

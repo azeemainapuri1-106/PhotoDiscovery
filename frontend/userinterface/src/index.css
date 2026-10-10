@@ -1,0 +1,53 @@
+/* Global styles: design tokens + reset.
+   NOTE: your original App.css used these variables (--ink, --paper, --line,
+   --sage, --serif, --sans) but they were not in the files you sent, so these
+   values are my best match. If you have the originals (usually in your old
+   index.css), paste them into :root below. */
+
+:root {
+  --ink: #2a2c27;
+  --paper: #faf9f6;
+  --line: #e4e2db;
+  --sage: #6c7161;
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

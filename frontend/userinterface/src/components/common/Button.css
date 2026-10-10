@@ -1,0 +1,35 @@
+.button {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font: 11px/1 var(--sans);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.button:focus-visible {
+  outline: 2px solid #6a705f;
+  outline-offset: 3px;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button--dark {
+  color: #fff;
+  background: #30332e;
+}
+
+.button--dark:hover {
+  background: #484b44;
+}

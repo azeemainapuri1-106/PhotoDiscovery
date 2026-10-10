@@ -1,0 +1,6 @@
+/* Only the page-level shell lives here.
+   Every component has its own CSS file next to it. */
+.app-shell {
+  min-height: 100vh;
+  overflow: hidden;
+}

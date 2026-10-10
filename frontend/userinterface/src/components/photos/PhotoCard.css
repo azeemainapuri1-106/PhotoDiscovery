@@ -1,0 +1,276 @@
+.photo-card {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  break-inside: avoid;
+  background: #e6e5df;
+  isolation: isolate;
+}
+
+.photo-card a:focus-visible,
+.icon-button:focus-visible {
+  outline: 2px solid #6a705f;
+  outline-offset: 3px;
+}
+
+.photo-card__image {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: #e6e5df;
+}
+
+.photo-card__image:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+
+.photo-card__image--portrait {
+  aspect-ratio: 0.76;
+}
+
+.photo-card__image--landscape {
+  aspect-ratio: 1.18;
+}
+
+.photo-card__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.015);
+  transition:
+    opacity 480ms ease,
+    transform 650ms cubic-bezier(0.2, 0.65, 0.3, 1);
+}
+
+.photo-card.is-loaded img {
+  opacity: 1;
+}
+
+.photo-card:hover img {
+  transform: scale(1.045);
+}
+
+.photo-card__skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, #e6e5df 20%, #eeede8 42%, #e6e5df 64%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.photo-card.is-loaded .photo-card__skeleton {
+  display: none;
+}
+
+.photo-card__error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: #73746e;
+  background: #e6e5df;
+  font-size: 11px;
+}
+
+.photo-card__overlay {
+  position: absolute;
+  inset: auto 0 0;
+  min-height: 88px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 32px 11px 11px;
+  opacity: 0;
+  background: linear-gradient(0deg, rgb(18 20 17 / 70%), transparent);
+  transition: opacity 200ms ease;
+}
+
+.photo-card:hover .photo-card__overlay,
+.photo-card:focus-within .photo-card__overlay {
+  opacity: 1;
+}
+
+.photo-card__credit {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.photo-card__credit span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-card__view-profile {
+  color: rgb(255 255 255 / 70%);
+  font-size: 9px;
+}
+
+.photo-card__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-button:focus-visible,
+.download-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.icon-button,
+.download-button {
+  height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 1px solid rgb(255 255 255 / 38%);
+  border-radius: 3px;
+  background: rgb(31 33 29 / 22%);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.icon-button {
+  width: 31px;
+  padding: 0;
+}
+
+.icon-button:hover,
+.download-button:hover {
+  border-color: rgb(255 255 255 / 75%);
+  background: rgb(31 33 29 / 70%);
+}
+
+.icon-button:active,
+.download-button:active {
+  transform: scale(0.95);
+}
+
+.heart-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+  transition:
+    fill 150ms ease,
+    transform 150ms ease;
+}
+
+.heart-icon.is-filled {
+  fill: #e9a49b;
+  stroke: #e9a49b;
+  transform: scale(1.04);
+}
+
+.favourite-button.is-active {
+  border-color: rgb(233 164 155 / 75%);
+  background: rgb(31 33 29 / 65%);
+}
+
+.download-button {
+  gap: 6px;
+  padding: 0 9px;
+  font: 9px/1 var(--sans);
+  text-decoration: none;
+}
+
+.download-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@media (max-width: 760px) {
+  .photo-card__overlay {
+    min-height: 70px;
+    padding: 25px 8px 8px;
+  }
+
+  .photo-card__actions {
+    gap: 4px;
+  }
+
+  .icon-button {
+    width: 29px;
+    height: 29px;
+  }
+
+  .download-button {
+    width: 29px;
+    height: 29px;
+    padding: 0;
+  }
+
+  .download-button span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-card__image--portrait {
+    aspect-ratio: 0.72;
+  }
+
+  .photo-card__image--landscape {
+    aspect-ratio: 0.9;
+  }
+
+  .photo-card__overlay {
+    opacity: 1;
+    min-height: 65px;
+    padding: 24px 7px 7px;
+  }
+
+  .photo-card__credit {
+    max-width: calc(100% - 66px);
+    font-size: 9px;
+  }
+
+  .photo-card__view-profile {
+    font-size: 8px;
+  }
+
+  .icon-button,
+  .download-button {
+    width: 27px;
+    height: 27px;
+  }
+
+  .heart-icon {
+    width: 15px;
+    height: 15px;
+  }
+}

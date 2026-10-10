@@ -1,0 +1,23 @@
+.discovery {
+  width: min(1440px, calc(100% - 96px));
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (max-width: 1100px) {
+  .discovery {
+    width: calc(100% - 56px);
+  }
+}
+
+@media (max-width: 760px) {
+  .discovery {
+    width: calc(100% - 36px);
+  }
+}
+
+@media (max-width: 480px) {
+  .discovery {
+    width: calc(100% - 28px);
+  }
+}
