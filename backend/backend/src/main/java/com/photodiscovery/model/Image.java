@@ -1,0 +1,114 @@
+package com.photodiscovery.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "images")
+public class Image {
+    @Id
+    @Column(length = 64)
+    private String id;
+
+    @Column(nullable = false, length = 500)
+    private String title;
+
+    @Column(nullable = false, length = 200)
+    private String photographer;
+
+    @Column(name = "photographer_url", length = 500)
+    private String photographerUrl;
+
+    @Column(nullable = false, length = 100)
+    private String category;
+
+    @Column(name = "image_url", nullable = false, length = 1000)
+    private String imageUrl;
+
+    @Column(name = "download_location", length = 1000)
+    private String downloadLocation;
+
+    @Column(nullable = false)
+    private int width;
+
+    @Column(nullable = false)
+    private int height;
+
+    protected Image() {
+    }
+
+    public Image(
+            String id,
+            String title,
+            String photographer,
+            String photographerUrl,
+            String category,
+            String imageUrl,
+            String downloadLocation,
+            int width,
+            int height) {
+        this.id = id;
+        update(title, photographer, photographerUrl, category, imageUrl, downloadLocation, width, height);
+    }
+
+    public void update(
+            String title,
+            String photographer,
+            String photographerUrl,
+            String category,
+            String imageUrl,
+            String downloadLocation,
+            int width,
+            int height) {
+        this.title = title;
+        this.photographer = photographer;
+        this.photographerUrl = photographerUrl;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.downloadLocation = downloadLocation;
+        this.width = width;
+        this.height = height;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getPhotographer() {
+        return photographer;
+    }
+
+    public String getPhotographerUrl() {
+        return photographerUrl;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getDownloadLocation() {
+        return downloadLocation;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getRatio() {
+        return height > width ? "portrait" : "landscape";
+    }
+}
