@@ -9,7 +9,7 @@ export const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false'
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
 // localStorage key where the auth token (e.g. JWT) will be stored after login.
-export const AUTH_TOKEN_KEY = 'aura_token'
+export const AUTH_TOKEN_KEY = 'photodiscovery_token'
 
 // How long (ms) to wait after the user stops typing before searching.
 export const SEARCH_DEBOUNCE_MS = 300

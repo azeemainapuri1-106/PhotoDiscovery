@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="site-footer">
       <Logo variant="footer" />
       <span>Good images make room for good ideas.</span>
-      <span>© Aura 2026</span>
+      <span>© PhotoDiscovery 2026</span>
     </footer>
   )
 }

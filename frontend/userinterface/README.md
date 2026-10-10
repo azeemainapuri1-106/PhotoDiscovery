@@ -1,4 +1,4 @@
-# Aura – photo discovery (React)
+# PhotoDiscovery – photo discovery (React)
 
 Your single-file app, split into a component architecture and prepared for a
 Spring Boot + MySQL backend.
@@ -90,7 +90,7 @@ compute it from image width/height on the backend).
 - Search/filter should happen **in SQL** (`WHERE title LIKE ... AND category = ...`)
   and add pagination (`page`, `size`) once you have many photos.
 - Auth: the client already sends `Authorization: Bearer <token>` when a token is
-  saved under `aura_token` in localStorage.
+  saved under `photodiscovery_token` in localStorage.
 
 ## Where to add things later
 

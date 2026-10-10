@@ -13,15 +13,15 @@ export function LogoMark({ className = '' }) {
   )
 }
 
-// Mark + the word "aura", linking home.
+// Mark + the product name, linking home.
 // variant: 'default' (header) | 'footer' (smaller)
 export default function Logo({ variant = 'default' }) {
   const className = variant === 'footer' ? 'wordmark wordmark--footer' : 'wordmark'
 
   return (
-    <a className={className} href="/" aria-label="Aura home">
+    <a className={className} href="/" aria-label="PhotoDiscovery home">
       <LogoMark />
-      <span>aura</span>
+      <span>PhotoDiscovery</span>
     </a>
   )
 }
