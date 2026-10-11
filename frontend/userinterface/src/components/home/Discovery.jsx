@@ -15,6 +15,8 @@ export default function Discovery({
   onRetry,
   favouriteIds,
   onToggleFavourite,
+  onDownload,
+  onOpenDetails,
   showSavedOnly,
   onClearFilters,
 }) {
@@ -24,13 +26,9 @@ export default function Discovery({
     // First load only: if we already have photos we keep showing them
     // while a new search loads, so the page doesn't flash.
     if (status === 'loading' && photos.length === 0) {
-      return (
-        <EmptyState
-          mark="…"
-          title="Loading photographs"
-          message="Just a moment."
-        />
-      )
+      return <div className="photo-grid-skeleton" role="status" aria-label="Loading photographs">
+        {Array.from({ length: 12 }, (_, index) => <span key={index} />)}
+      </div>
     }
 
     if (status === 'error') {
@@ -65,6 +63,8 @@ export default function Discovery({
         photos={photos}
         favouriteIds={favouriteIds}
         onToggleFavourite={onToggleFavourite}
+        onDownload={onDownload}
+        onOpenDetails={onOpenDetails}
       />
     )
   }

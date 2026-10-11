@@ -21,3 +21,33 @@
     width: calc(100% - 28px);
   }
 }
+.photo-grid-skeleton {
+  columns: 4;
+  column-gap: 12px;
+}
+
+.photo-grid-skeleton span {
+  display: block;
+  height: 230px;
+  margin: 0 0 12px;
+  break-inside: avoid;
+  background: linear-gradient(100deg, #e6e5df 20%, #eeede8 42%, #e6e5df 64%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.photo-grid-skeleton span:nth-child(3n) {
+  height: 310px;
+}
+
+@media (max-width: 760px) {
+  .photo-grid-skeleton {
+    columns: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-grid-skeleton {
+    columns: 2;
+  }
+}

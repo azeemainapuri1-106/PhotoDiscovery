@@ -13,6 +13,10 @@ export default function Header({
   showSavedOnly,
   onToggleSaved,
   onOpenAuth,
+  user,
+  onOpenProfile,
+  onOpenHistory,
+  onLogout,
 }) {
   return (
     <header className="site-header">
@@ -28,6 +32,10 @@ export default function Header({
           showSavedOnly={showSavedOnly}
           onToggleSaved={onToggleSaved}
           onOpenAuth={onOpenAuth}
+          user={user}
+          onOpenProfile={onOpenProfile}
+          onOpenHistory={onOpenHistory}
+          onLogout={onLogout}
         />
       </div>
     </header>

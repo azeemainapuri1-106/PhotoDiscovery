@@ -4,13 +4,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "images")
+@Table(name = "images", uniqueConstraints = @UniqueConstraint(
+        name = "uk_images_source_external_id", columnNames = {"source", "external_id"}))
 public class Image {
     @Id
     @Column(length = 64)
     private String id;
+
+    @Column(nullable = false, length = 32)
+    private String source;
+
+    @Column(name = "external_id", nullable = false, length = 64)
+    private String externalId;
 
     @Column(nullable = false, length = 500)
     private String title;
@@ -50,6 +58,8 @@ public class Image {
             int width,
             int height) {
         this.id = id;
+        this.source = "UNSPLASH";
+        this.externalId = id;
         update(title, photographer, photographerUrl, category, imageUrl, downloadLocation, width, height);
     }
 
@@ -74,6 +84,14 @@ public class Image {
 
     public String getId() {
         return id;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public String getExternalId() {
+        return externalId;
     }
 
     public String getTitle() {

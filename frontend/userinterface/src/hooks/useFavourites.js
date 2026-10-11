@@ -4,25 +4,30 @@ import { favouriteService } from '../services'
 // Keeps the list of favourite photo ids.
 // The heart updates instantly ("optimistic update"); if the server call fails
 // we undo the change so the UI never lies about what was saved.
-export function useFavourites() {
+export function useFavourites(userId) {
   const [favouriteIds, setFavouriteIds] = useState([])
+  const [error, setError] = useState(null)
 
-  // Load saved favourites once (empty in mock mode)
   useEffect(() => {
+    setFavouriteIds([])
+    setError(null)
+    if (!userId) return undefined
+
     const controller = new AbortController()
 
     favouriteService
       .getFavouriteIds({ signal: controller.signal })
-      .then(setFavouriteIds)
+      .then((ids) => setFavouriteIds(ids.map(String)))
       .catch((err) => {
-        if (err.name !== 'AbortError') console.error('Could not load favourites', err)
+        if (err.name !== 'AbortError') setError(err)
       })
 
     return () => controller.abort()
-  }, [])
+  }, [userId])
 
   const toggleFavourite = useCallback(
-    (photoId) => {
+    async (photoId) => {
+      photoId = String(photoId)
       const wasFavourite = favouriteIds.includes(photoId)
 
       // 1) update the screen right away
@@ -37,17 +42,20 @@ export function useFavourites() {
         ? favouriteService.removeFavourite(photoId)
         : favouriteService.addFavourite(photoId)
 
-      request.catch((err) => {
-        console.error('Could not update favourite', err)
+      try {
+        await request
+        setError(null)
+      } catch (err) {
+        setError(err)
         setFavouriteIds((current) =>
           wasFavourite
             ? [...current, photoId]
             : current.filter((id) => id !== photoId),
         )
-      })
+      }
     },
     [favouriteIds],
   )
 
-  return { favouriteIds, toggleFavourite }
+  return { favouriteIds, toggleFavourite, error }
 }

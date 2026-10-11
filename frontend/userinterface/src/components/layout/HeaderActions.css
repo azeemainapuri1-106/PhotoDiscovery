@@ -1,5 +1,6 @@
 .header-actions {
   display: flex;
+  min-width: 0;
   align-items: center;
   justify-content: flex-end;
   gap: 22px;
@@ -24,6 +25,26 @@
 .header-link:hover,
 .header-link.is-active {
   color: var(--ink);
+}
+
+.header-link--profile {
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #deddd6;
+  border-radius: 50%;
+  background: #f0efec;
+}
+
+.header-link--profile svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
 }
 
 .header-link:focus-visible {
@@ -71,6 +92,10 @@
 
   .header-link {
     font-size: 11px;
+  }
+
+  .header-link--history {
+    display: none;
   }
 
   .header-signup {

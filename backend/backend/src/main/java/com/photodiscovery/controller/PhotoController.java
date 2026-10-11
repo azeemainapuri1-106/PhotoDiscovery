@@ -39,9 +39,18 @@ public class PhotoController {
     public List<PhotoDto> getPhotos(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "1") @Min(1) int page,
-            @RequestParam(name = "per_page", defaultValue = "30") @Min(1) @Max(30) int perPage) {
-        return photoService.getPhotos(q, category, page, perPage);
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(30) int perPage) {
+        return photoService.getPhotos(q, category, page + 1, perPage);
+    }
+
+    @GetMapping("/search")
+    public List<PhotoDto> searchPhotos(
+            @RequestParam String q,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(30) int perPage) {
+        return photoService.getPhotos(q.trim(), category, page + 1, perPage);
     }
 
     @GetMapping("/{id}")

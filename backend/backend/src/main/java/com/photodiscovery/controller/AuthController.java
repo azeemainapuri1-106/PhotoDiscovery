@@ -1,11 +1,13 @@
 package com.photodiscovery.controller;
 
 import com.photodiscovery.dto.AuthResponse;
+import com.photodiscovery.dto.GoogleAuthRequest;
 import com.photodiscovery.dto.LoginRequest;
 import com.photodiscovery.dto.RegisterRequest;
 import com.photodiscovery.dto.UserDto;
 import com.photodiscovery.service.AuthService;
 import com.photodiscovery.service.CurrentUserService;
+import com.photodiscovery.service.GoogleAuthService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -21,10 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final GoogleAuthService googleAuthService;
     private final CurrentUserService currentUserService;
 
-    public AuthController(AuthService authService, CurrentUserService currentUserService) {
+    public AuthController(
+            AuthService authService,
+            GoogleAuthService googleAuthService,
+            CurrentUserService currentUserService) {
         this.authService = authService;
+        this.googleAuthService = googleAuthService;
         this.currentUserService = currentUserService;
     }
 
@@ -37,6 +44,11 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/google")
+    public AuthResponse google(@Valid @RequestBody GoogleAuthRequest request) {
+        return googleAuthService.authenticate(request.idToken());
     }
 
     @GetMapping("/me")

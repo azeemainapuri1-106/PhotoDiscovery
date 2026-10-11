@@ -1,104 +1,54 @@
-# PhotoDiscovery – photo discovery (React)
+# PhotoDiscovery frontend
 
-Your single-file app, split into a component architecture and prepared for a
-Spring Boot + MySQL backend.
+Component-based React application integrated with the Spring Boot API.
 
-## Run it
+## Run locally
 
 ```bash
 npm install
-cp .env.example .env     # first time only
+copy .env.example .env
 npm run dev
 ```
 
-It runs on **mock data** by default (`VITE_USE_MOCK=true`), so it behaves exactly
-like the original single file.
+The Vite proxy forwards `/api/*` to `VITE_DEV_PROXY_TARGET` (default
+`http://localhost:8080`). Configure `VITE_GOOGLE_CLIENT_ID` in `.env` and the
+same client ID as `GOOGLE_CLIENT_ID` in the backend environment to enable Google
+sign-in.
 
-## Folder structure
+### Configure Google Identity Services
 
-```
-src/
-├── main.jsx                  entry point
-├── App.jsx                   container: owns state, calls hooks, passes props down
-├── App.css                   page shell only
-├── index.css                 global design tokens (:root variables) + reset
-│
-├── components/               UI only. Each component has its own .jsx + .css
-│   ├── common/               Logo, Button, Icons (reused everywhere)
-│   ├── layout/               Header, SearchBar, HeaderActions, Footer
-│   ├── home/                 Intro, Discovery (the browsing section)
-│   ├── photos/               PhotoGrid, PhotoCard, CategoryBar, EmptyState
-│   └── auth/                 AuthDialog
-│
-├── hooks/                    logic that components share
-│   ├── usePhotos             fetches photos (loading / error / retry, cancels old requests)
-│   ├── useCategories         fetches category names, adds "For you"
-│   ├── useFavourites         favourite ids with optimistic update + rollback
-│   ├── useSearchQuery        search text <-> URL (?q=) sync
-│   ├── useFocusShortcut      "/" focuses the search box
-│   └── useDebounce           waits until typing stops before searching
-│
-├── services/                 the ONLY place that talks to the backend
-│   ├── apiClient.js          fetch wrapper: base URL, JSON, auth token, errors
-│   ├── photoService.js
-│   ├── categoryService.js
-│   ├── favouriteService.js
-│   └── authService.js        ready, UI not connected yet
-│
-├── config/env.js             reads .env (USE_MOCK, API_BASE_URL, ...)
-├── constants/                DEFAULT_CATEGORY, AUTH_MODES
-└── data/                     mock data (delete when backend is live)
-```
+1. In Google Cloud Console, create or select an OAuth 2.0 **Web application**
+   client ID and add the frontend URL (for local development,
+   `http://localhost:5173`) under **Authorized JavaScript origins**.
+2. Copy `.env.example` to `.env` and set
+   `VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com`.
+3. Set `GOOGLE_CLIENT_ID` to that same value in the Spring Boot server
+   environment. The backend verifies the ID token's signature, issuer and
+   audience before issuing its own application JWT.
+4. Restart Vite after editing `.env`. The GIS script is loaded from
+   `https://accounts.google.com/gsi/client`; the official button sends its ID
+   token to `POST /api/auth/google`.
 
-**Rule of thumb:** components never call `fetch`. They get data from hooks, hooks
-get it from services, services call `apiClient`.
+## API integration
 
-```
-Component -> Hook -> Service -> apiClient -> Spring Boot
-```
+Components use hooks and services; only `src/services/apiClient.js` sends API
+requests. The client attaches the stored JWT, parses structured API errors, and
+clears expired tokens.
 
-## Switching to the real backend
-
-1. In `.env` set `VITE_USE_MOCK=false`.
-2. Set `VITE_DEV_PROXY_TARGET` to your Spring Boot URL (default `http://localhost:8080`).
-   The dev server forwards `/api/*` there, so you don't need CORS during development.
-3. Make your API match the contract below (or adjust the `normalize...` function /
-   endpoint path inside the matching service file – nothing else needs to change).
-
-### Suggested endpoints
-
-| Method | URL | Returns |
+| Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/api/photos?q=&category=` | `[ { id, title, photographer, category, image, ratio } ]` |
-| GET | `/api/categories` | `[ "Nature", "Interiors", ... ]` |
-| GET | `/api/favourites` | `[ photoId, ... ]` (logged-in user) |
-| POST | `/api/favourites/{photoId}` | 201 / 204 |
-| DELETE | `/api/favourites/{photoId}` | 204 |
-| POST | `/api/auth/register` | `{ token, user }` |
-| POST | `/api/auth/login` | `{ token, user }` |
-| GET | `/api/auth/me` | `{ id, name, email }` |
+| GET | `/api/photos?page=0&perPage=20` | Initial gallery |
+| GET | `/api/photos/search?q={keyword}&page=0` | Debounced search |
+| GET | `/api/photos/{id}` | Photo detail |
+| POST | `/api/photos/{id}/download` | Download and quota tracking |
+| GET | `/api/downloads/quota` | Profile quota |
+| GET | `/api/downloads/history` | Download history |
+| GET/POST/DELETE | `/api/favourites[/{photoId}]` | Saved photos |
+| POST | `/api/auth/register`, `/api/auth/login` | Email authentication |
+| POST | `/api/auth/google` | Verify a Google Identity Services ID token |
+| GET | `/api/auth/me` | Restore the authenticated session |
 
-Errors: return JSON like `{ "message": "..." }` – it is shown to the user.
-
-`ratio` must be `"portrait"` or `"landscape"` (store it in the photos table, or
-compute it from image width/height on the backend).
-
-### Spring Boot notes
-
-- In **production** (frontend and API on different domains) enable CORS, e.g.
-  `@CrossOrigin` or a `WebMvcConfigurer` allowing your frontend origin.
-- Search/filter should happen **in SQL** (`WHERE title LIKE ... AND category = ...`)
-  and add pagination (`page`, `size`) once you have many photos.
-- Auth: the client already sends `Authorization: Bearer <token>` when a token is
-  saved under `photodiscovery_token` in localStorage.
-
-## Where to add things later
-
-- **Login/Sign-up form** -> `components/auth/AuthDialog.jsx`, call `authService`.
-  Then add an `AuthContext` so the header can show the user instead of Log in / Sign up.
-- **Pagination / infinite scroll** -> extend `usePhotos` and `photoService.getPhotos`.
-- **Routing** (`react-router`) -> the app currently uses `history.pushState` for `?q=`;
-  `useSearchQuery` is the only place to change.
-- **Photo download** -> the `download` attribute is ignored for cross-origin
-  images. When photos come from your backend, add `GET /api/photos/{id}/download`
-  and point the Download link at it.
+The backend returns photo image URLs; the frontend does not call the image
+provider API. For production deployments, set `VITE_API_BASE_URL` to the
+backend API base and configure `photodiscovery.cors.allowed-origin` to the
+frontend origin.

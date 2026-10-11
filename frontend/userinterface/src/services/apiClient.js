@@ -1,74 +1,63 @@
+import axios from 'axios'
 import { API_BASE_URL, AUTH_TOKEN_KEY } from '../config/env'
-
-// A small wrapper around fetch. Every service uses this, so things like the
-// base URL, JSON handling, auth header and error handling live in ONE place.
 
 export class ApiError extends Error {
   constructor(message, status, data) {
     super(message)
     this.name = 'ApiError'
-    this.status = status // HTTP status code, e.g. 404
-    this.data = data // parsed error body from the server (if any)
+    this.status = status
+    this.data = data
   }
 }
 
-function getToken() {
-  try {
-    return localStorage.getItem(AUTH_TOKEN_KEY)
-  } catch {
-    return null
+export const axiosClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { Accept: 'application/json' },
+})
+
+axiosClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
   }
+  return config
+})
+
+function notifyUnauthorized(url = '') {
+  if (/\/auth\/(login|register|google)(?:\?|$)/.test(url)) return
+  localStorage.removeItem(AUTH_TOKEN_KEY)
+  window.dispatchEvent(new Event('photodiscovery:unauthorized'))
 }
 
-function buildUrl(path, params) {
-  const url = `${API_BASE_URL}${path}`
-  if (!params) return url
-
-  const search = new URLSearchParams()
-  Object.entries(params).forEach(([key, value]) => {
-    // skip empty values so we never send "?q=" or "?category=undefined"
-    if (value !== undefined && value !== null && value !== '') {
-      search.append(key, value)
+axiosClient.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (axios.isCancel(error) || error.code === 'ERR_CANCELED') {
+      return Promise.reject(new DOMException('The request was aborted.', 'AbortError'))
     }
-  })
-  const queryString = search.toString()
-  return queryString ? `${url}?${queryString}` : url
-}
 
-async function request(method, path, { params, body, signal } = {}) {
-  const headers = { Accept: 'application/json' }
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
+    if (!error.response) {
+      return Promise.reject(new ApiError(
+        'Unable to reach the server. Check your connection and try again.',
+        0,
+        null,
+      ))
+    }
 
-  // Attach the JWT (or similar) once the user is logged in.
-  const token = getToken()
-  if (token) headers.Authorization = `Bearer ${token}`
-
-  const response = await fetch(buildUrl(path, params), {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-    signal, // lets us cancel the request (see usePhotos)
-  })
-
-  // 204 No Content (typical for DELETE) has no body to parse
-  const hasBody = response.status !== 204
-  const data = hasBody ? await response.json().catch(() => null) : null
-
-  if (!response.ok) {
-    throw new ApiError(
-      data?.message || `Request failed with status ${response.status}`,
-      response.status,
+    const { status, data } = error.response
+    if (status === 401) notifyUnauthorized(error.config?.url)
+    return Promise.reject(new ApiError(
+      data?.message || `The server could not complete the request (${status}).`,
+      status,
       data,
-    )
-  }
-
-  return data
-}
+    ))
+  },
+)
 
 export const apiClient = {
-  get: (path, options) => request('GET', path, options),
-  post: (path, body, options) => request('POST', path, { ...options, body }),
-  put: (path, body, options) => request('PUT', path, { ...options, body }),
-  patch: (path, body, options) => request('PATCH', path, { ...options, body }),
-  delete: (path, options) => request('DELETE', path, options),
+  get: (path, options) => axiosClient.get(path, options),
+  post: (path, body, options) => axiosClient.post(path, body, options),
+  put: (path, body, options) => axiosClient.put(path, body, options),
+  patch: (path, body, options) => axiosClient.patch(path, body, options),
+  delete: (path, options) => axiosClient.delete(path, options),
 }

@@ -2,7 +2,7 @@ import PhotoCard from './PhotoCard'
 import './PhotoGrid.css'
 
 // Masonry-style grid of PhotoCards.
-export default function PhotoGrid({ photos, favouriteIds, onToggleFavourite }) {
+export default function PhotoGrid({ photos, favouriteIds, onToggleFavourite, onDownload, onOpenDetails }) {
   return (
     <div className="photo-grid" aria-live="polite">
       {photos.map((photo) => (
@@ -11,6 +11,8 @@ export default function PhotoGrid({ photos, favouriteIds, onToggleFavourite }) {
           photo={photo}
           isFavourite={favouriteIds.includes(photo.id)}
           onToggleFavourite={onToggleFavourite}
+          onDownload={onDownload}
+          onOpenDetails={onOpenDetails}
         />
       ))}
     </div>
